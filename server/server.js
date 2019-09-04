@@ -7,6 +7,8 @@ const moment = require("moment");
 // Configuration constants
 const publicPath = path.join(__dirname, "../public");
 const port = process.env.PORT || 3000;
+// Formatted time 
+const time = () => () => moment().format("ddd, hA");
 
 const app = express();
 const server = http.createServer(app);
@@ -19,14 +21,32 @@ app.use(express.static(publicPath));
 io.on("connection", socket => {
   console.log("New user connected:");
 
+  socket.emit("newMessage", {
+      from: 'Admin',
+      text: 'Welcome to the chat app',
+      createdAt: time()()
+  })
+
+  socket.broadcast.emit("newMessage", {
+      from: "Admin",
+      text: "New user joined",
+      createdAt: time()()
+  })
+
   socket.on("createMessage", newMessage => {
     console.log("Create Message: ", newMessage);
 
     io.emit("newMessage", {
       from: newMessage.from,
       text: newMessage.text,
-      createdAt: moment().format("dddd, hA")
+      createdAt: time()(),
     });
+
+    // socket.broadcast.emit("newMessage", {
+    //   from: newMessage.from,
+    //   text: newMessage.text,
+    //   createdAt: moment().format("dddd, hA")
+    // });
   });
 
   socket.on("disconnect", () => {
