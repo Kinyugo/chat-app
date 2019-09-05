@@ -8,7 +8,14 @@ const generateMessage = (from, text) => ({
     createdAt: time()()
 })
 
+const generateLocationMessage = (from, latitude, longitude) => ({
+    from,
+    url: `https://www.google.com/maps?q=${latitude},${longitude}`,
+    createdAt: time()()
+})
+
 module.exports = {
     generateMessage,
+    generateLocationMessage,
     time,
 }
