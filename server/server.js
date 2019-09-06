@@ -2,9 +2,9 @@ const path = require("path");
 const http = require("http");
 const express = require("express");
 const socketIO = require("socket.io");
-const { generateMessage, generateLocationMessage } = require("./utils/message");
-const { isValidString } = require("./utils/validation");
-const { Users } = require("./utils/Users");
+const { generateMessage, generateLocationMessage } = require("./utils/message.js");
+const { isValidString } = require("./utils/validation.js");
+const { Users } = require("./utils/Users.js");
 
 let users = new Users();
 
@@ -47,12 +47,12 @@ io.on("connection", socket => {
     callback();
   });
 
-  socket.on("createMessage", ({text}, callback) => {
+  socket.on("createMessage", ({ text }, callback) => {
     console.log("Create Message: ", text);
     const user = users.getUser(socket.id);
 
-    if(user && isValidString(text)){
-      io.to(user.room).emit("newMessage", generateMessage(user.name, text))
+    if (user && isValidString(text)) {
+      io.to(user.room).emit("newMessage", generateMessage(user.name, text));
     }
 
     callback();
@@ -70,12 +70,14 @@ io.on("connection", socket => {
   socket.on("disconnect", () => {
     console.log("User was disconnected.");
     const user = users.getUser(socket.id);
-    if(user) {
+    if (user) {
       users = users.removeUser(socket.id);
-      io.to(user.room).emit("updateUsersList", users.getUsersFor(user.room))
-      io.to(user.room).emit("newMessage", generateMessage("Admin", `${user.name} has left.`))
+      io.to(user.room).emit("updateUsersList", users.getUsersFor(user.room));
+      io.to(user.room).emit(
+        "newMessage",
+        generateMessage("Admin", `${user.name} has left.`)
+      );
     }
-    
   });
 });
 
