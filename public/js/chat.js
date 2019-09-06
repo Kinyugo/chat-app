@@ -22,11 +22,28 @@ const socket = io();
 const createLi = () => $("<li></li>");
 socket.on("connect", () => {
   console.log("Connected to the server.");
+  const params = jQuery.deparam(window.location.search);
+  socket.emit("join", params, err => {
+    if(err) {
+      alert(err);
+      window.location.href = "/";
+    }else {
+      console.log("No Error.");
+    }
+  });
 });
 
 socket.on("disconnect", () => {
   console.log("Disconnected from server.");
 });
+
+socket.on("updateUsersList", users => {
+  const ol = $("<ol></ol>");
+  users.forEach(user => {
+    ol.append($("<li></li>").text(user))
+  })
+  $("#user").append(ol);
+})
 
 socket.on("newMessage", ({ text, from, createdAt }) => {
   const template = $("#message-template").html();
