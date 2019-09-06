@@ -35,6 +35,7 @@ socket.on("connect", () => {
 
 socket.on("disconnect", () => {
   console.log("Disconnected from server.");
+  $("#user").html('');
 });
 
 socket.on("updateUsersList", users => {
@@ -77,7 +78,6 @@ $("#message-form").on("submit", e => {
   socket.emit(
     "createMessage",
     {
-      from: "user",
       text: messageInput.val()
     },
     () => {
