@@ -23,7 +23,7 @@ socket.on("newMessage", ({ text, from, createdAt }) => {
 });
 
 socket.on("newLocationMessage", ({ from, url, createdAt }) => {
-  const template = $("location-message-template").html();
+  const template = $("#location-message-template").html();
   const html = Mustache.render(template, {
     url,
     from,
