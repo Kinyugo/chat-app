@@ -1,5 +1,22 @@
 const formatTime = time => moment(time).format("h:mm a");
 
+const scrollToBottom = () => {
+  // selectors
+  const messages = $("#messages");
+  const newMessage = messages.children("li:last-child");
+
+  // height calculations
+  const clientHeight = messages.prop("clientHeight");
+  const scrollTop = messages.prop("scrollTop");
+  const scrollHeight = messages.prop("scrollHeight");
+  const newMessageHeight = newMessage.innerHeight();
+  const lastMessageHeight = newMessage.prev().innerHeight();
+
+  if(clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+    messages.scrollTop(scrollHeight);
+  }
+}
+
 const socket = io();
 
 const createLi = () => $("<li></li>");
@@ -20,6 +37,7 @@ socket.on("newMessage", ({ text, from, createdAt }) => {
   });
 
   $("#messages").append(html);
+  scrollToBottom();
 });
 
 socket.on("newLocationMessage", ({ from, url, createdAt }) => {
@@ -31,6 +49,7 @@ socket.on("newLocationMessage", ({ from, url, createdAt }) => {
   });
 
   $("#messages").append(html);
+  scrollToBottom();
 
 });
 
