@@ -17,6 +17,10 @@ const io = socketIO(server);
 // Static files middleware
 app.use(express.static(publicPath));
 
+app.get("/test", (req, res) => {
+  res.sendFile(path.join(publicPath, "test.html"));
+})
+
 // Socket methods
 io.on("connection", socket => {
   console.log("New user connected:");
@@ -33,12 +37,7 @@ io.on("connection", socket => {
 
     io.emit("newMessage", generateMessage(newMessage.from, newMessage.text));
 
-    callback("From back here.");
-    // socket.broadcast.emit("newMessage", {
-    //   from: newMessage.from,
-    //   text: newMessage.text,
-    //   createdAt: moment().format("dddd, hA")
-    // });
+    callback();
   });
 
   socket.on("createLocationMessage", ({latitude, longitude}) => {
