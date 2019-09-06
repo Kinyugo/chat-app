@@ -1,3 +1,5 @@
+const formatTime = time => moment(time).format("h:mm a");
+
 const socket = io();
 
 const createLi = () => $("<li></li>");
@@ -12,7 +14,8 @@ socket.on("disconnect", () => {
 socket.on("newMessage", message => {
   console.log("New Message.", message);
 
-  const li = createLi().text(`${message.from} : ${message.text}`);
+  const formattedTime = formatTime(message.createdAt);
+  const li = createLi().text(`${message.from}  @ ${formattedTime}: ${message.text}`);
 
   $("#messages").append(li);
 });
@@ -21,7 +24,9 @@ socket.on("newLocationMessage", message => {
   const li = createLi();
   const a = $("<a target='blank'>My current location</a>");
 
-  li.text(`${message.from}: `);
+  const formattedTime = formatTime(message.createdAt);
+
+  li.text(`${message.from} @ ${formattedTime}: `);
   a.attr("href", message.url);
 
   li.append(a);
@@ -52,7 +57,7 @@ locationButton.on("click", () => {
 
   locationButton.attr("disabled", "disabled").text("Sending location...");
 
-  const removeDisabledAtrr = () => locationButton.removeAtrr("disabled").text("Send location");
+  const removeDisabledAtrr = () => locationButton.removeAttr("disabled").text("Send location");
 
   navigator.geolocation.getCurrentPosition(
     position => {
